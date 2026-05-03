@@ -7,7 +7,9 @@ __pycache__/
 *.so
 
 logs
-
+cleaned_data.csv
+test.csv
+train.csv
 
 
 # Distribution / packaging
