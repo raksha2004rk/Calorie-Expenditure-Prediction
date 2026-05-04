@@ -10,13 +10,11 @@ logs
 cleaned_data.csv
 test.csv
 train.csv
-<<<<<<< HEAD
 calorie
 
+.vscode/
 
-=======
 calorie_env
->>>>>>> f748386e9efdf36e354971d16b19e3eef5c55434
 
 # Distribution / packaging
 .Python
