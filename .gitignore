@@ -10,6 +10,8 @@ logs
 cleaned_data.csv
 test.csv
 train.csv
+calorie
+
 
 
 # Distribution / packaging
