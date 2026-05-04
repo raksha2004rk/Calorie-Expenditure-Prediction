@@ -19,3 +19,5 @@ setup(
     packages=find_packages(),
     install_requires=get_requirements("requirements.txt")
 )
+
+# // To install the package, run: pip install -e .
