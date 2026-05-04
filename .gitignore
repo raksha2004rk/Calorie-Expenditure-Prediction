@@ -10,9 +10,13 @@ logs
 cleaned_data.csv
 test.csv
 train.csv
+<<<<<<< HEAD
 calorie
 
 
+=======
+calorie_env
+>>>>>>> f748386e9efdf36e354971d16b19e3eef5c55434
 
 # Distribution / packaging
 .Python
@@ -91,6 +95,7 @@ profile_default/
 ipython_config.py
 
 # pyenv
+
 #   For a library or package, you might want to ignore these files since the code is
 #   intended to run in multiple environments; otherwise, check them in:
 # .python-version
