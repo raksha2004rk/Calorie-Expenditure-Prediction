@@ -1,19 +1,14 @@
 import logging
 import os
-import sys
+from datetime import datetime
 
-# Create logs folder
-LOG_DIR = "logs"
-os.makedirs(LOG_DIR, exist_ok=True)
+LOG_FILE = f"{datetime.now().strftime('%m_%d_%Y_%H_%M_%S')}.log"
+log_path = os.path.join(os.getcwd(), "logs", LOG_FILE)
 
-LOG_FILE = os.path.join(LOG_DIR, "app.log")
+os.makedirs(log_path, exist_ok=True)
 
-# Configure logging
 logging.basicConfig(
+    filename=os.path.join(log_path, LOG_FILE),
+    format="[ %(asctime)s ] %(lineno)d %(name)s - %(levelname)s - %(message)s",
     level=logging.INFO,
-    format="[%(asctime)s] %(levelname)s - %(message)s",
-    handlers=[
-        logging.FileHandler(LOG_FILE),      # save logs to file
-        logging.StreamHandler(sys.stdout)   # show logs in console/notebook
-    ]
 )
