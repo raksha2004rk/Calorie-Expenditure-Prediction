@@ -11,6 +11,8 @@ cleaned_data.csv
 test.csv
 train.csv
 calorie
+*.pkl
+
 
 .vscode/
 
