@@ -1,20 +1,21 @@
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import r2_score
+from src.logger import logging
+from src.exception import CustomException
 from src.utils import save_object
+import sys
 
 class ModelTrainer:
-
     def initiate_model_trainer(self, X_train, X_test, y_train, y_test):
+        try:
+            logging.info("Model training started")
 
-        model = RandomForestRegressor(n_estimators=100, random_state=42)
+            model = RandomForestRegressor(n_estimators=100, max_depth=10)
+            model.fit(X_train, y_train)
 
-        model.fit(X_train, y_train)
+            save_object("artifacts/model.pkl", model)
 
-        y_pred = model.predict(X_test)
+            logging.info("Model training completed")
 
-        score = r2_score(y_test, y_pred)
-        print("R2 Score:", score)
-
-        save_object("artifacts/model.pkl", model)
-
-        return model
+        except Exception as e:
+            logging.error("Error in model training")
+            raise CustomException(e, sys)

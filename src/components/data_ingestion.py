@@ -1,22 +1,31 @@
 import pandas as pd
 import os
+from sklearn.model_selection import train_test_split
+from src.logger import logging
+from src.exception import CustomException
+import sys
 
 class DataIngestion:
-
-    def __init__(self):
-        self.train_path = "artifacts/train.csv"
-        self.test_path = "artifacts/test.csv"
-
     def initiate_data_ingestion(self):
-        df = pd.read_csv("data/processed/cleaned_data.csv")
+        logging.info("Data ingestion started")
 
-        os.makedirs("artifacts", exist_ok=True)
+        try:
+            df = pd.read_csv("data/train.csv")
 
-        from sklearn.model_selection import train_test_split
+            os.makedirs("artifacts", exist_ok=True)
 
-        train, test = train_test_split(df, test_size=0.2, random_state=42)
+            train_set, test_set = train_test_split(df, test_size=0.2, random_state=42)
 
-        train.to_csv(self.train_path, index=False)
-        test.to_csv(self.test_path, index=False)
+            train_set.to_csv("artifacts/train.csv", index=False)
+            test_set.to_csv("artifacts/test.csv", index=False)
 
-        return self.train_path, self.test_path
+            logging.info("Data ingestion completed")
+
+            return (
+                "artifacts/train.csv",
+                "artifacts/test.csv"
+            )
+
+        except Exception as e:
+            logging.error("Error in data ingestion")
+            raise CustomException(e, sys)
