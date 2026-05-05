@@ -1,32 +1,28 @@
 import os
-from joblib import dump, load
+import pickle
 from src.logger import logging
-from src.exception import CustomException
-import sys
 
 def save_object(file_path, obj):
     try:
-        logging.info("Saving object started")
-
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
-        dump(obj, file_path)
 
-        logging.info("Object saved successfully")
+        logging.info(f"Saving object to {file_path}")
+
+        with open(file_path, "wb") as f:
+            pickle.dump(obj, f)
 
     except Exception as e:
-        logging.error("Error occurred while saving object")
-        raise CustomException(e, sys)
+        logging.error(f"Error saving object: {e}")
+        raise e
 
 
 def load_object(file_path):
     try:
-        logging.info("Loading object started")
+        logging.info(f"Loading object from {file_path}")
 
-        obj = load(file_path)
-
-        logging.info("Object loaded successfully")
-        return obj
+        with open(file_path, "rb") as f:
+            return pickle.load(f)
 
     except Exception as e:
-        logging.error("Error occurred while loading object")
-        raise CustomException(e, sys)
+        logging.error(f"Error loading object: {e}")
+        raise e

@@ -1,8 +1,9 @@
 import pandas as pd
 import sys
+import os
+import pickle
 from src.logger import logging
 from src.exception import CustomException
-from src.utils import save_object
 
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
@@ -25,43 +26,34 @@ class DataTransformation:
             X_test = test_df.drop(columns=[target])
             y_test = test_df[target]
 
-            # Identify columns
-            numerical_columns = X_train.select_dtypes(exclude="object").columns
-            categorical_columns = X_train.select_dtypes(include="object").columns
+            # ✅ FIXED columns (must match Flask input)
+            numerical_columns = ["Age", "Height", "Weight", "Duration", "Heart_Rate", "Body_Temp"]
+            categorical_columns = ["Sex"]
 
-            logging.info(f"Numerical cols: {numerical_columns}")
-            logging.info(f"Categorical cols: {categorical_columns}")
+            num_pipeline = Pipeline([
+                ("scaler", StandardScaler())
+            ])
 
-            # Pipelines
-            num_pipeline = Pipeline(
-                steps=[
-                    ("scaler", StandardScaler())
-                ]
-            )
+            cat_pipeline = Pipeline([
+                ("onehot", OneHotEncoder(handle_unknown="ignore"))
+            ])
 
-            cat_pipeline = Pipeline(
-                steps=[
-                    ("onehot", OneHotEncoder(handle_unknown="ignore"))
-                ]
-            )
+            preprocessor = ColumnTransformer([
+                ("num", num_pipeline, numerical_columns),
+                ("cat", cat_pipeline, categorical_columns)
+            ])
 
-            preprocessor = ColumnTransformer(
-                [
-                    ("num", num_pipeline, numerical_columns),
-                    ("cat", cat_pipeline, categorical_columns)
-                ]
-            )
+            X_train = preprocessor.fit_transform(X_train)
+            X_test = preprocessor.transform(X_test)
 
-            # Fit & transform
-            X_train_processed = preprocessor.fit_transform(X_train)
-            X_test_processed = preprocessor.transform(X_test)
+            os.makedirs("artifacts", exist_ok=True)
 
-            # Save preprocessor
-            save_object("artifacts/preprocessor.pkl", preprocessor)
+            with open("artifacts/preprocessor.pkl", "wb") as f:
+                pickle.dump(preprocessor, f)
 
-            logging.info("Data transformation completed")
+            logging.info("Preprocessor saved successfully")
 
-            return X_train_processed, X_test_processed, y_train, y_test
+            return X_train, X_test, y_train, y_test
 
         except Exception as e:
             logging.error("Error in data transformation")

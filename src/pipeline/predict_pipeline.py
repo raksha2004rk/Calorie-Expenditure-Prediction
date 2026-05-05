@@ -1,27 +1,36 @@
 import pandas as pd
-from src.logger import logging
 from src.utils import load_object
+from src.logger import logging
 
 class PredictPipeline:
 
     def __init__(self):
-        logging.info("Loading model and preprocessor")
-        self.model = load_object("artifacts/model.pkl")
-        self.preprocessor = load_object("artifacts/preprocessor.pkl")
+        try:
+            logging.info("Loading model and preprocessor")
+
+            self.model = load_object("artifacts/model.pkl")
+            self.preprocessor = load_object("artifacts/preprocessor.pkl")
+
+        except Exception as e:
+            logging.error(f"Error loading artifacts: {e}")
+            raise e
 
     def predict(self, data):
-        logging.info("Starting prediction")
+        try:
+            logging.info(f"Input data: {data}")
 
-        df = pd.DataFrame([data])
-        logging.info(f"Input data: {df}")
+            df = pd.DataFrame([data])
+            transformed = self.preprocessor.transform(df)
 
-        data_transformed = self.preprocessor.transform(df)
+            result = self.model.predict(transformed)
 
-        prediction = self.model.predict(data_transformed)
+            logging.info(f"Prediction: {result}")
 
-        logging.info(f"Prediction result: {prediction}")
+            return result
 
-        return prediction
+        except Exception as e:
+            logging.error(f"Prediction error: {e}")
+            raise e
 
 
 class CustomData:
