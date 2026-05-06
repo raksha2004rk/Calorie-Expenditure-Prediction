@@ -26,7 +26,7 @@ Given user health and exercise-related attributes, predict the number of calorie
 
 Project Structure
 
-bash
+
 Calories-Expenditure-Prediction/
 │
 ├── artifacts/                # Generated files (datasets, models, preprocessor)
