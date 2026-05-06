@@ -1,222 +1,225 @@
-# 🔥 Calorie Expenditure Prediction App
+#Calorie-Expenditure-Prediction
 
-A full-stack Machine Learning project that predicts **calories burned** based on user fitness data such as age, gender, weight, height, duration, and heart rate.
+ Overview
 
-The project follows an **end-to-end ML pipeline** with deployment using Flask, React, and Docker.
+This project aims to predict the number of calories burned by an individual based on physical and workout-related parameters such as age, gender, height, weight, exercise duration, heart rate, and body temperature.
 
----
+The project follows a modular machine learning pipeline architecture including data ingestion, data transformation, model training, and evaluation.
 
-## 🚀 Features
 
-* 📊 Data Cleaning & EDA (Jupyter Notebooks)
-* 🧠 ML Model Training (Random Forest Regressor)
-* ⚙️ Modular ML Pipeline (`src/` structure)
-* 🌐 Flask Backend API for predictions
-* 🎨 React + Tailwind Frontend UI
-* 📄 PDF Report Generation
-* 🐳 Dockerized Backend
-* ☁️ Deployment (Render + Vercel)
 
----
+ Project Objectives
 
-## 🧠 Tech Stack
+* Analyze calories expenditure dataset
+* Build a robust ML pipeline
+* Perform feature engineering and preprocessing
+* Train and evaluate regression models
+* Deploy a reusable and scalable project structure
 
-### Machine Learning
 
-* Python
+
+ Problem Statement
+
+Given user health and exercise-related attributes, predict the number of calories burned during physical activity.
+
+
+Project Structure
+
+
+Calories-Expenditure-Prediction/
+│
+├── artifacts/                # Generated files (datasets, models, preprocessor)
+│   ├── data.csv
+│   ├── train.csv
+│   ├── test.csv
+│   ├── preprocessor.pkl
+│   └── model.pkl
+│
+├── notebooks/               # Jupyter notebooks (EDA & experiments)
+│   ├── data/
+│   │    └── calories.csv
+│   ├── 1. EDA.ipynb
+│   └── 2. model_training.ipynb
+│
+├── src/
+│   ├── components/
+│   │    ├── data_ingestion.py
+│   │    ├── data_transformation.py
+│   │    └── model_trainer.py
+│   │
+│   ├── pipeline/
+│   │    └── training_pipeline.py
+│   │
+│   ├── exception.py
+│   ├── logger.py
+│   └── utils.py
+│
+├── venv/                    # Virtual environment
+├── requirements.txt
+├── setup.py
+└── README.md
+
+
+
+
+ Tech Stack
+
+* Python 3.10
 * Pandas, NumPy
 * Scikit-learn
+* Matplotlib, Seaborn
+* Pickle (Model Serialization)
 
-### Backend
 
-* Flask
-* Flask-CORS
-* Gunicorn
 
-### Frontend
+ ML Pipeline Workflow
 
-* React
-* Tailwind CSS
-* Axios
+1. Data Ingestion
 
-### Deployment
+* Reads dataset from source
+* Splits into train & test datasets
+* Saves raw and processed files
 
-* Docker
-* Render (Backend)
-* Vercel (Frontend)
+2. Data Transformation
 
----
+* Handles missing values
+* Applies encoding to categorical features
+* Scales numerical features
+* Saves preprocessing pipeline (`preprocessor.pkl`)
 
-## 📁 Project Structure
+3. Model Training
 
-```
-calorie_prediction_app/
-│
-├── data/
-├── notebooks/
-├── artifacts/
-├── src/
-├── backend/
-├── frontend/
-├── logs/
-└── README.md
-```
+* Trains regression models
+* Evaluates performance
+* Saves best model (`model.pkl`)
 
----
 
-## 📊 ML Workflow
 
-1. Data Collection
-2. Data Cleaning (NaN handling, outliers)
-3. Exploratory Data Analysis (EDA)
-4. Feature Engineering
-5. Model Training & Evaluation
-6. Model Saving (`model.pkl`, `preprocessor.pkl`)
+Features Used
 
----
+Numerical Features
 
-## ⚙️ How to Run the Project
+* Age
+* Height
+* Weight
+* Duration
+* Heart_Rate
+* Body_Temp
 
-### 🔹 Step 1: Clone Repository
+Categorical Features
 
-```bash
-git clone https://github.com/raksha2004rk/Calorie-Expenditure-Prediction
-cd calorie_prediction_app
-```
+* Gender
 
----
 
-### 🔹 Step 2: Run ML Pipeline
 
-```bash
-python src/pipeline/train_pipeline.py
-```
+How to Run the Project
 
-This will generate:
+Step 1: Clone the repository
 
-* `artifacts/model.pkl`
-* `artifacts/preprocessor.pkl`
 
----
+git clone <your-repo-link>
+cd Calories-Expenditure-Prediction
 
-### 🔹 Step 3: Run Backend (Flask)
 
-```bash
-cd backend
+Step 2: Create & activate virtual environment
+
+
+python -m venv venv
+
+
+ Activate Environment (Windows)
+
+bash
+venv\Scripts\activate
+
+
+
+
+Step 3: Install dependencies
+
+
 pip install -r requirements.txt
-python app.py
-```
 
-Backend runs on:
 
-```
-http://127.0.0.1:5000
-```
 
----
 
-### 🔹 Step 4: Run Frontend (React)
+Step 4: Run the pipeline
 
-```bash
-cd frontend
-npm install
-npm run dev
-```
 
-Frontend runs on:
+python -m src.components.data_ingestion
 
-```
-http://localhost:5173
-```
 
----
 
-## 🐳 Run with Docker
 
-### Build Image
+ Sample Output
 
-```bash
-docker build -t calorie-backend ./backend
-```
+After running the pipeline, the following files are generated:
 
-### Run Container
 
-```bash
-docker run -p 5000:5000 calorie-backend
-```
+artifacts/
+ ├── data.csv
+ ├── train.csv
+ ├── test.csv
+ ├── preprocessor.pkl
+ └── model.pkl
 
----
 
-## ☁️ Deployment
 
-### Backend (Render)
 
-* Deploy Docker-based Flask API
-* Public API endpoint used by frontend
+Key Highlights
 
-### Frontend (Vercel)
+* Modular and scalable ML architecture
+* Production-level folder structure
+* Custom logging and exception handling
+* Reusable preprocessing pipeline
+* Clean separation of concerns
 
-* Connect GitHub repo
-* Update API URL in frontend
 
----
 
-## 🔗 API Endpoint
+Common Issues & Fixes
 
-### Predict Calories
+| Issue                | Solution                         |
+| -------------------- | -------------------------------- |
+| File not found error | Ensure correct working directory |
+| Kernel crash         | Install ipykernel in venv        |
+| Model not saving     | Check artifacts path             |
+| Import errors        | Run using `python -m`            |
 
-```
-POST /predict
-```
 
-#### Request Body:
 
-```json
-{
-  "age": 25,
-  "gender": "male",
-  "height": 175,
-  "weight": 70,
-  "duration": 30,
-  "heart_rate": 120
-}
-```
+Future Improvements
 
-#### Response:
+* Add Flask/FastAPI deployment
+* Integrate CI/CD pipeline
+* Add model monitoring
+* Hyperparameter tuning
+* Docker containerization
 
-```json
-{
-  "calories": 210.45
-}
-```
 
----
 
-## 📈 Model Performance
+Author
 
-* Algorithm: Random Forest Regressor
-* R² Score: ~0.95+
-* MAE: Low error (dataset dependent)
+* Raksha Kadam
+* Dishant Phandyal
+* Vivek Chauhan
+* Aditya Gupta
+* Merajudaula Shekh
 
----
+ Dataset Source
 
-## 📌 Future Improvements
+The dataset used in this project is collected from Kaggle.  
+It contains various health and workout-related attributes used to predict calories expenditure.
 
-* JWT Authentication
-* User history tracking
-* Graph-based insights
-* Mobile responsiveness
-* FastAPI migration
+Dataset Source: Kaggle Calories Burnt Prediction Dataset
 
----
+Acknowledgements
 
-## 👨‍💻 Author
+- Scikit-learn documentation  
+- Kaggle dataset for Calories Expenditure Prediction  
+- ML pipeline best practices  
 
-**RAKSHA KADAM**
-BTech CSE (AI/ML)
 
----
 
-## ⭐ If you like this project
+Contact
 
-Give it a ⭐ on GitHub and feel free to contribute!
+Feel free to connect for collaboration or project-related queries.
