@@ -6,7 +6,7 @@ This project predicts the number of calories burned by an individual based on ph
 
 The project follows a modular Machine Learning pipeline architecture including data ingestion, data transformation, model training, and evaluation.
 
-
+------------------------------------------------------------------------------------------------------------------------------------------
 
 Project Objectives
 
@@ -16,13 +16,13 @@ Project Objectives
 - Train and evaluate regression models
 - Deploy a reusable and scalable project structure
 
-
+------------------------------------------------------------------------------------------------------------------------------------------
 
 Problem Statement
 
 Given user health and exercise-related attributes, predict the number of calories burned during physical activity.
 
-
+------------------------------------------------------------------------------------------------------------------------------------------
 
 Project Structure
 
@@ -61,7 +61,7 @@ Calories-Expenditure-Prediction/
 └── README.md
 
 
-
+------------------------------------------------------------------------------------------------------------------------------------------
 
 Tech Stack
 
@@ -73,7 +73,7 @@ Tech Stack
 - Seaborn
 - Pickle (Model Serialization)
 
-
+------------------------------------------------------------------------------------------------------------------------------------------
 
 ML Pipeline Workflow
 
@@ -97,6 +97,7 @@ ML Pipeline Workflow
 - Saves best model (`model.pkl`)
 
 
+------------------------------------------------------------------------------------------------------------------------------------------
 
  Features Used
 
@@ -113,7 +114,7 @@ Categorical Features
 
 - Gender
 
-
+------------------------------------------------------------------------------------------------------------------------------------------
 
 How to Run the Project
 
@@ -148,7 +149,7 @@ Step 4: Run the Pipeline
 python -m src.components.data_ingestion
 
 
-
+------------------------------------------------------------------------------------------------------------------------------------------
 
 Sample Output
 
@@ -163,7 +164,7 @@ artifacts/
 └── model.pkl
 
 
-
+------------------------------------------------------------------------------------------------------------------------------------------
 
 Key Highlights
 
@@ -173,7 +174,7 @@ Key Highlights
 - Reusable preprocessing pipeline
 - Clean separation of concerns
 
-
+------------------------------------------------------------------------------------------------------------------------------------------
 
 Common Issues & Fixes
 
@@ -185,6 +186,7 @@ Common Issues & Fixes
 | Import errors | Run using `python -m` |
 
 
+------------------------------------------------------------------------------------------------------------------------------------------
 
 Future Improvements
 
@@ -195,6 +197,7 @@ Future Improvements
 - Docker containerization
 
 
+------------------------------------------------------------------------------------------------------------------------------------------
 
 Authors
 
@@ -204,7 +207,7 @@ Authors
 - Aditya Gupta
 - Merajudaula Shekh
 
-
+------------------------------------------------------------------------------------------------------------------------------------------
 
 Dataset Source
 
@@ -213,7 +216,7 @@ It contains various health and workout-related attributes used to predict calori
 
 Dataset: Kaggle Calories Burnt Prediction Dataset
 
-
+------------------------------------------------------------------------------------------------------------------------------------------
 
 Acknowledgements
 
