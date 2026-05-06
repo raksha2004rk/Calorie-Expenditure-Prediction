@@ -1,35 +1,31 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
-from authlib.integrations.flask_client import OAuth
 import os
+import pickle
+import pandas as pd
+import numpy as np
 
 app = Flask(__name__)
-app.secret_key = "super_secret_random_key" # Required to use sessions and flash messages
+app.secret_key = "super_secret_random_key"
 
-# --- MOCK DATABASE ---
-# In a real app, you would use SQLAlchemy and a real database (SQLite, PostgreSQL)
-users_db = {
-    "admin": "password123",
-    "user@example.com": "securepass"
-}
+# --- LOAD ML ARTIFACTS ---
+# Using os.path to correctly find the artifacts folder relative to this file
+base_path = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(base_path, '..', 'artifacts', 'model.pkl')
+PREPROCESSOR_PATH = os.path.join(base_path, '..', 'artifacts', 'preprocessor.pkl')
 
-# --- GOOGLE OAUTH SETUP ---
-oauth = OAuth(app)
-google = oauth.register(
-    name='google',
-    # Replace these with your actual credentials from Google Cloud Console
-    client_id=os.environ.get("GOOGLE_CLIENT_ID", "YOUR_GOOGLE_CLIENT_ID"),
-    client_secret=os.environ.get("GOOGLE_CLIENT_SECRET", "YOUR_GOOGLE_CLIENT_SECRET"),
-    server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
-    client_kwargs={
-        'scope': 'openid email profile'
-    }
-)
+try:
+    model = pickle.load(open(MODEL_PATH, 'rb'))
+    preprocessor = pickle.load(open(PREPROCESSOR_PATH, 'rb'))
+except Exception as e:
+    print(f"CRITICAL ERROR: Could not load ML artifacts. Check paths. {e}")
+
+# --- MOCK USER DATABASE ---
+users_db = {"admin": "password123"}
 
 # --- ROUTES ---
 
 @app.route('/')
 def login_page():
-    # If the user is already logged in, skip the login page
     if 'user' in session:
         return redirect(url_for('dashboard'))
     return render_template('login.html')
@@ -38,49 +34,53 @@ def login_page():
 def login():
     username = request.form.get('username')
     password = request.form.get('password')
-
-    # Check against our mock database
     if username in users_db and users_db[username] == password:
-        session['user'] = username # Log the user in via session
+        session['user'] = username
         return redirect(url_for('dashboard'))
-    else:
-        flash("Invalid username or password. Please try again.")
-        return redirect(url_for('login_page'))
+    flash("Invalid credentials. Use admin / password123")
+    return redirect(url_for('login_page'))
 
-@app.route('/dashboard')
+@app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
-    # Protect this route: kick unauthenticated users back to login
     if 'user' not in session:
         return redirect(url_for('login_page'))
     
-    return render_template('dashboard.html', username=session['user'])
+    result = None
+    if request.method == 'POST':
+        try:
+            # 1. Capture data from the form
+            gender = request.form.get('sex')
+            age = float(request.form.get('age'))
+            height = float(request.form.get('height'))
+            weight = float(request.form.get('weight'))
+            duration = float(request.form.get('duration'))
+            heart_rate = float(request.form.get('heart_rate'))
+            body_temp = float(request.form.get('body_temp'))
+
+            # 2. Construct DataFrame matching the Training Data Headers exactly
+            # We include a dummy 'id' since it was present in your CSV structure
+            input_df = pd.DataFrame([[0, gender, age, height, weight, duration, heart_rate, body_temp]],
+                                     columns=['id', 'Sex', 'Age', 'Height', 'Weight', 'Duration', 'Heart_Rate', 'Body_Temp'])
+
+            # 3. Apply the Preprocessor (Handling One-Hot Encoding/Scaling)
+            transformed_features = preprocessor.transform(input_df)
+
+            # 4. Generate Prediction using the Model
+            prediction = model.predict(transformed_features)
+            
+            # 5. Round the prediction for a clean UI output
+            result = f"{round(prediction[0], 2)}"
+            
+        except Exception as e:
+            print(f"PREDICTION ERROR: {e}")
+            result = "Invalid Input"
+
+    return render_template('dashboard.html', username=session['user'], result=result)
 
 @app.route('/logout')
 def logout():
-    session.pop('user', None) # Remove user from session
+    session.pop('user', None)
     return redirect(url_for('login_page'))
 
-# --- GOOGLE AUTH ROUTES ---
-
-@app.route('/signup/google')
-def google_signup():
-    # Redirects the user to Google's consent screen
-    redirect_uri = url_for('google_auth_callback', _external=True)
-    return google.authorize_redirect(redirect_uri)
-
-@app.route('/auth/google/callback')
-def google_auth_callback():
-    # Google sends the user back here with a token
-    token = google.authorize_access_token()
-    user_info = google.parse_id_token(token, nonce=None)
-    
-    # Normally, you'd check if user_info['email'] exists in your DB, 
-    # and create a new account if it doesn't. 
-    # For now, we'll just log them straight into the session:
-    session['user'] = user_info['email']
-    
-    return redirect(url_for('dashboard'))
-
 if __name__ == '__main__':
-    # Run the app
     app.run(debug=True, port=5000)
