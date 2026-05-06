@@ -1,38 +1,405 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<link rel="stylesheet" href="/static/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calorie Predictor Dashboard</title>
+    
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- Base & Body Styles --- */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #020010;
+            color: #ffffff;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        /* --- Ambient Aura Background --- */
+        .ambient-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            background-color: #020010;
+            overflow: hidden;
+        }
+
+        .aura {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.4;
+            animation: float 20s infinite alternate ease-in-out;
+        }
+
+        .aura-purple {
+            width: 40vw;
+            height: 40vw;
+            background-color: #9333ea;
+            top: -10%;
+            left: -10%;
+        }
+
+        .aura-pink {
+            width: 50vw;
+            height: 50vw;
+            background-color: #ec4899;
+            bottom: -20%;
+            right: -10%;
+            animation-duration: 25s;
+            animation-delay: -5s;
+        }
+
+        .aura-blue {
+            width: 35vw;
+            height: 35vw;
+            background-color: #3b82f6;
+            top: 30%;
+            left: 30%;
+            opacity: 0.2;
+            animation-duration: 30s;
+            animation-delay: -10s;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(5vw, 10vh) scale(1.1); }
+            100% { transform: translate(-5vw, 15vh) scale(0.9); }
+        }
+
+        /* --- Layout Containers --- */
+        .main-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        /* --- Dashboard Card Styles --- */
+        .dashboard-card {
+            width: 100%;
+            max-width: 32rem; 
+            background-color: rgba(17, 24, 39, 0.4);
+            backdrop-filter: blur(16px); /* Increased blur for the glass effect against the new auras */
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 1rem;
+            padding: 2.5rem 2rem;
+            border: 1px solid rgba(167, 139, 250, 0.2);
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+        }
+        
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-header h2 {
+            font-size: 1.875rem;
+            margin: 0;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .dashboard-header p {
+            color: rgba(216, 180, 254, 0.8);
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        /* --- Form Grid & Inputs --- */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        .dashboard-form label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #e9d5ff;
+            margin-bottom: 0.4rem;
+        }
+
+        .form-input, select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(192, 132, 252, 0.3);
+            border-radius: 0.5rem;
+            color: #ffffff;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s;
+            box-sizing: border-box;
+            appearance: none; 
+        }
+        
+        .select-wrapper {
+            position: relative;
+        }
+        .select-wrapper::after {
+            content: '▼';
+            font-size: 0.8rem;
+            color: #c084fc;
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .form-input:focus, select:focus {
+            outline: none;
+            border-color: #a855f7;
+            box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.4);
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        select option {
+            background-color: #020010;
+            color: white;
+        }
+
+        /* --- Button & Actions --- */
+        .submit-button-wrapper {
+            padding: 1px;
+            border-radius: 0.5rem;
+            background-image: linear-gradient(to right, #9333ea, #ec4899, #ef4444);
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+        
+        .submit-button-wrapper:hover {
+             background-image: linear-gradient(to right, #7e22ce, #db2777, #dc2626);
+        }
+
+        .submit-button {
+            width: 100%;
+            background-color: rgba(17, 24, 39, 0.9);
+            color: #ffffff;
+            font-weight: 700;
+            padding: 0.85rem 1rem;
+            border-radius: 0.4rem;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            letter-spacing: 1px;
+        }
+
+        .submit-button:hover {
+            background-color: transparent;
+        }
+
+        /* --- Result & Logout --- */
+        .result-box {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            border-radius: 0.5rem;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .result-box h3 {
+            margin: 0;
+            color: #34d399;
+            font-size: 1.25rem;
+            font-weight: 600;
+            text-shadow: 0 0 8px rgba(52, 211, 153, 0.4);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logout-link {
+            display: block;
+            text-align: center;
+            margin-top: 2rem;
+            color: #ef4444;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .logout-link:hover {
+            color: #fca5a5;
+            text-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+        }
+
+        /* --- Cursor Effects --- */
+        .cursor-glow, .particle {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+        }
+
+        .cursor-glow {
+            width: 10px; height: 10px;
+            background: transparent;
+            box-shadow: 0 0 20px 5px rgba(192, 132, 252, 0.7), 0 0 30px 10px rgba(139, 92, 246, 0.4);
+            z-index: 9999;
+            transition: transform 0.1s ease-out;
+        }
+
+        .particle {
+            z-index: 9998;
+            animation: particle-fade 1s forwards;
+        }
+
+        @keyframes particle-fade {
+            from { opacity: 1; transform: scale(1) translate(-50%, -50%); }
+            to { opacity: 0; transform: scale(0) translate(-50%, -50%) rotate(90deg); }
+        }
+    </style>
 </head>
 <body>
 
-<div class="card">
-<h2>Calorie Predictor</h2>
+    <!-- Ambient Glowing Background -->
+    <div class="ambient-background">
+        <div class="aura aura-purple"></div>
+        <div class="aura aura-pink"></div>
+        <div class="aura aura-blue"></div>
+    </div>
 
-<form method="POST">
+    <div class="main-container">
+        
+        <div id="dashboard-card" class="dashboard-card">
+            
+            <div class="dashboard-header">
+                <h2>Calorie Predictor</h2>
+                <p>Enter your metrics to calculate expenditure</p>
+            </div>
 
-<input name="age" placeholder="Age" required>
+            <!-- Form -->
+            <form method="POST" class="dashboard-form">
+                
+                <div class="form-grid">
+                    <!-- Age -->
+                    <div>
+                        <label for="age">Age</label>
+                        <input type="number" name="age" id="age" placeholder="e.g. 25" required class="form-input">
+                    </div>
 
-<select name="sex">
-<option value="male">Male</option>
-<option value="female">Female</option>
-</select>
+                    <!-- Sex -->
+                    <div>
+                        <label for="sex">Gender</label>
+                        <div class="select-wrapper">
+                            <select name="sex" id="sex" required>
+                                <option value="" disabled selected>Select...</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                        </div>
+                    </div>
 
-<input name="height" placeholder="Height (cm)" required>
-<input name="weight" placeholder="Weight (kg)" required>
-<input name="duration" placeholder="Duration (min)" required>
-<input name="heart_rate" placeholder="Heart Rate" required>
-<input name="body_temp" placeholder="Body Temp" required>
+                    <!-- Height -->
+                    <div>
+                        <label for="height">Height (cm)</label>
+                        <input type="number" step="0.1" name="height" id="height" placeholder="e.g. 175" required class="form-input">
+                    </div>
 
-<button>Predict Calories</button>
-</form>
+                    <!-- Weight -->
+                    <div>
+                        <label for="weight">Weight (kg)</label>
+                        <input type="number" step="0.1" name="weight" id="weight" placeholder="e.g. 70" required class="form-input">
+                    </div>
 
-{% if result %}
-<h3>Calories Burned: {{ result }}</h3>
-{% endif %}
+                    <!-- Duration -->
+                    <div>
+                        <label for="duration">Duration (min)</label>
+                        <input type="number" step="0.1" name="duration" id="duration" placeholder="e.g. 45" required class="form-input">
+                    </div>
 
-<a href="/logout">Logout</a>
+                    <!-- Heart Rate -->
+                    <div>
+                        <label for="heart_rate">Heart Rate (bpm)</label>
+                        <input type="number" step="0.1" name="heart_rate" id="heart_rate" placeholder="e.g. 110" required class="form-input">
+                    </div>
 
-</div>
+                    <!-- Body Temp -->
+                    <div class="full-width">
+                        <label for="body_temp">Body Temp (°C)</label>
+                        <input type="number" step="0.1" name="body_temp" id="body_temp" placeholder="e.g. 37.5" required class="form-input">
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="submit-button-wrapper">
+                    <button type="submit" class="submit-button">PREDICT CALORIES</button>
+                </div>
+            </form>
+
+            <!-- Jinja Result Block -->
+            <!-- {% if result %} -->
+            <div class="result-box">
+                <h3>🔥 {{ result }} kcal Burned!</h3>
+            </div>
+            <!-- {% endif %} -->
+
+            <!-- Logout Link -->
+            <a href="/logout" class="logout-link">Log out of account</a>
+
+        </div>
+    </div>
+
+    <!-- JavaScript for Cursor Effects -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const cursorGlow = document.createElement('div');
+            cursorGlow.classList.add('cursor-glow');
+            document.body.appendChild(cursorGlow);
+
+            const particleColors = ['#c084fc', '#f472b6', '#60a5fa', '#34d399', '#fbbf24'];
+            let moveCounter = 0;
+
+            document.addEventListener('mousemove', (e) => {
+                cursorGlow.style.left = `${e.clientX}px`;
+                cursorGlow.style.top = `${e.clientY}px`;
+                
+                moveCounter++;
+                if (moveCounter % 3 !== 0) return;
+                
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                particle.style.left = `${e.clientX}px`;
+                particle.style.top = `${e.clientY}px`;
+                
+                const size = Math.random() * 6 + 2;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.background = particleColors[Math.floor(Math.random() * particleColors.length)];
+                
+                document.body.appendChild(particle);
+                setTimeout(() => particle.remove(), 1000);
+            });
+        });
+    </script>
 
 </body>
 </html>
